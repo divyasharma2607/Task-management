@@ -31,7 +31,7 @@ export default function VerifyOtp({ employeeCode }) {
 
     alert("Login successful");
 
-    navigate(data.role === "admin" ? "/crud" : "/user");
+    navigate(data.role === "admin" ? "/admin" : "/user");
   };
 
   return (
