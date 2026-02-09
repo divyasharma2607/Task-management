@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-export default function Loginn() {
+export default function Login({ onForgotClick, onLoginSuccess }) {
   const [formData, setFormData] = useState({
     employee_code: "",
     password: "",
-    role: "user", // ✅ added role
+    role: "user",
   });
 
-  const navigate = useNavigate();
-
   const handleChange = (e) => {
-    setFormData({ 
-      ...formData, 
-      [e.target.name]: e.target.value 
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -24,7 +21,7 @@ export default function Loginn() {
       const res = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData), // role included
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
@@ -36,12 +33,8 @@ export default function Loginn() {
 
       alert("OTP sent successfully");
 
-      navigate("/verify-otp", {
-        state: {
-          employee_code: formData.employee_code,
-          role: formData.role, // ✅ pass role forward if needed
-        },
-      });
+      // ✅ OPEN VERIFY OTP SCREEN (HOME PAGE)
+      onLoginSuccess(formData.employee_code);
 
     } catch (err) {
       console.error(err);
@@ -50,24 +43,22 @@ export default function Loginn() {
   };
 
   return (
-    <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-md h-100 mt-15">
+    <div className="max-w-md p-8 bg-white rounded-xl shadow-md h-100 mt-15">
       <h2 className="text-2xl font-bold text-center mb-6 text-black">
         Employee Login
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
 
-         {/* 🔽 Role Dropdown */}
         <select
           name="role"
           value={formData.role}
           onChange={handleChange}
-          className="w-50 p-2 border rounded  text-black"
+          className="w-50 p-2 border rounded text-black"
         >
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
-
 
         <input
           type="text"
@@ -89,7 +80,6 @@ export default function Loginn() {
           required
         />
 
-       
         <button
           type="submit"
           className="w-full bg-red-700 text-white py-2 rounded"
@@ -97,15 +87,13 @@ export default function Loginn() {
           Login
         </button>
 
-        <div className="">
-          <button
-            type="button"
-            onClick={() => navigate("/EmpCode")}
-            className="text-blue-600 hover:underline "
-          >
-            Forget Password?
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onForgotClick}
+          className="text-blue-600 hover:underline"
+        >
+          Forgot Password?
+        </button>
       </form>
     </div>
   );
